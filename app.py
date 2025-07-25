@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pytz
 from datetime import datetime
+from matplotlib.ticker import MultipleLocator
 
 # === Load model dan komponen ===
 model = joblib.load('LinearSVC - Kala Learn Ukulele & Tuner.pkl')
@@ -14,11 +15,11 @@ label_encoder = joblib.load('label_encoder_Kala Learn Ukulele & Tuner.pkl')
 label_map = {'positive': 'Positif', 'negative': 'Negatif'}
 color_map = {'Positif': 'blue', 'Negatif': 'red'}
 
-# === Setup Halaman ===
+# === Setup halaman ===
 st.set_page_config(page_title="🎵 Sentiment App – Kala", layout="centered")
 st.title("🎵 Aplikasi Analisis Sentimen – Kala Learn Ukulele & Tuner")
 
-# === Pilih Mode Input ===
+# === Pilih mode input ===
 st.header("📌 Pilih Metode Input")
 input_mode = st.radio("Pilih salah satu:", ["📝 Input Manual", "📁 Upload File CSV"])
 
@@ -135,8 +136,12 @@ else:
                     ax_bar.text(bar.get_x() + bar.get_width() / 2, height + 0.3, f'{int(height)}',
                                 ha='center', va='bottom', fontsize=10)
 
+                # Jadikan sumbu Y dalam bilangan bulat
+                ax_bar.yaxis.set_major_locator(MultipleLocator(1))
+
                 max_count = bar_data['Jumlah'].max()
-                ax_bar.set_ylim(0, max_count * 1.3)  # Tambahkan ruang 30% di atas
+                ax_bar.set_ylim(0, max_count * 1.3)
+
                 ax_bar.set_ylabel("Jumlah")
                 ax_bar.set_xlabel("Sentimen")
                 ax_bar.set_title("Distribusi Sentimen Pengguna – Kala Learn Ukulele & Tuner")
