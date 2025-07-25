@@ -14,7 +14,8 @@ label_encoder = joblib.load('label_encoder_Kala Learn Ukulele & Tuner.pkl')
 label_map = {'positive': 'Positif', 'negative': 'Negatif'}
 color_map = {'Positif': 'blue', 'Negatif': 'red'}
 
-# === Judul Aplikasi ===
+# === Setup Halaman ===
+st.set_page_config(page_title="🎵 Sentiment App – Kala", layout="centered")
 st.title("🎵 Aplikasi Analisis Sentimen – Kala Learn Ukulele & Tuner")
 
 # === Pilih Mode Input ===
@@ -65,7 +66,7 @@ if input_mode == "📝 Input Manual":
             st.download_button(
                 label="📥 Unduh Hasil sebagai CSV",
                 data=csv_manual,
-                file_name="hasil_prediksi_manual_Kala Learn Ukulele & Tuner.csv",
+                file_name="hasil_prediksi_manual_kala.csv",
                 mime="text/csv"
             )
 
@@ -126,14 +127,16 @@ else:
                 bar_data.columns = ['Sentimen', 'Jumlah']
                 colors = [color_map.get(sent, 'gray') for sent in bar_data['Sentimen']]
 
-                fig_bar, ax_bar = plt.subplots()
+                fig_bar, ax_bar = plt.subplots(figsize=(6, 4))
                 bars = ax_bar.bar(bar_data['Sentimen'], bar_data['Jumlah'], color=colors)
 
                 for bar in bars:
                     height = bar.get_height()
-                    ax_bar.text(bar.get_x() + bar.get_width() / 2, height + 0.5, f'{int(height)}',
+                    ax_bar.text(bar.get_x() + bar.get_width() / 2, height + 0.3, f'{int(height)}',
                                 ha='center', va='bottom', fontsize=10)
 
+                max_count = bar_data['Jumlah'].max()
+                ax_bar.set_ylim(0, max_count * 1.3)  # Tambahkan ruang 30% di atas
                 ax_bar.set_ylabel("Jumlah")
                 ax_bar.set_xlabel("Sentimen")
                 ax_bar.set_title("Distribusi Sentimen Pengguna – Kala Learn Ukulele & Tuner")
@@ -154,7 +157,8 @@ else:
                     labels=pie_data.index,
                     colors=pie_colors,
                     autopct=lambda pct: autopct_format(pct, pie_data),
-                    startangle=90
+                    startangle=90,
+                    textprops={'fontsize': 10}
                 )
                 ax_pie.axis('equal')
                 st.pyplot(fig_pie)
@@ -164,7 +168,7 @@ else:
                 st.download_button(
                     label="📥 Unduh Hasil CSV",
                     data=csv_result,
-                    file_name="hasil_prediksi_Kala Learn Ukulele & Tuner.csv",
+                    file_name="hasil_prediksi_kala.csv",
                     mime="text/csv"
                 )
 
