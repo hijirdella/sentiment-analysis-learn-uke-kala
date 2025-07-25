@@ -15,11 +15,11 @@ label_encoder = joblib.load('label_encoder_Kala Learn Ukulele & Tuner.pkl')
 label_map = {'positive': 'Positif', 'negative': 'Negatif'}
 color_map = {'Positif': 'blue', 'Negatif': 'red'}
 
-# === Setup halaman ===
+# === Setup Halaman ===
 st.set_page_config(page_title="🎵 Sentiment App – Kala", layout="centered")
 st.title("🎵 Aplikasi Analisis Sentimen – Kala Learn Ukulele & Tuner")
 
-# === Pilih mode input ===
+# === Pilih Mode Input ===
 st.header("📌 Pilih Metode Input")
 input_mode = st.radio("Pilih salah satu:", ["📝 Input Manual", "📁 Upload File CSV"])
 
@@ -133,14 +133,13 @@ else:
 
                 for bar in bars:
                     height = bar.get_height()
-                    ax_bar.text(bar.get_x() + bar.get_width() / 2, height + 0.3, f'{int(height)}',
+                    ax_bar.text(bar.get_x() + bar.get_width() / 2, height + 0.5, f'{int(height)}',
                                 ha='center', va='bottom', fontsize=10)
 
-                # Jadikan sumbu Y dalam bilangan bulat
-                ax_bar.yaxis.set_major_locator(MultipleLocator(1))
-
+                # Sumbu Y bilangan bulat dengan interval 5
+                ax_bar.yaxis.set_major_locator(MultipleLocator(5))
                 max_count = bar_data['Jumlah'].max()
-                ax_bar.set_ylim(0, max_count * 1.3)
+                ax_bar.set_ylim(0, ((max_count // 5) + 1) * 5)
 
                 ax_bar.set_ylabel("Jumlah")
                 ax_bar.set_xlabel("Sentimen")
