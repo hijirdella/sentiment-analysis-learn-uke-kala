@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pytz
 from datetime import datetime
-from matplotlib.ticker import MultipleLocator
+import matplotlib.ticker as mticker
 
 # === Load model dan komponen ===
 model = joblib.load('LinearSVC - Kala Learn Ukulele & Tuner.pkl')
@@ -31,13 +31,13 @@ now_wib = datetime.now(wib)
 # 📝 MODE 1: INPUT MANUAL
 # ========================================
 if input_mode == "📝 Input Manual":
-    st.subheader("🧾 Masukkan Satu Review Pengguna")
+    st.subheader("📟 Masukkan Satu Review Pengguna")
 
     name = st.text_input("👤 Nama Pengguna:")
     star_rating = st.selectbox("⭐ Rating Bintang:", [1, 2, 3, 4, 5])
     user_review = st.text_area("💬 Tulis Review Pengguna:")
 
-    review_day = st.date_input("📅 Tanggal:", value=now_wib.date())
+    review_day = st.date_input("🗓️ Tanggal:", value=now_wib.date())
     review_time = st.time_input("⏰ Waktu:", value=now_wib.time())
 
     review_datetime = datetime.combine(review_day, review_time)
@@ -65,7 +65,7 @@ if input_mode == "📝 Input Manual":
 
             csv_manual = result_df.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Unduh Hasil sebagai CSV",
+                label="📅 Unduh Hasil sebagai CSV",
                 data=csv_manual,
                 file_name="hasil_prediksi_manual_kala.csv",
                 mime="text/csv"
@@ -131,15 +131,15 @@ else:
                 fig_bar, ax_bar = plt.subplots(figsize=(6, 4))
                 bars = ax_bar.bar(bar_data['Sentimen'], bar_data['Jumlah'], color=colors)
 
+                max_count = bar_data['Jumlah'].max()
+                step = 10 if max_count <= 100 else 50 if max_count <= 1000 else 100
+                ax_bar.yaxis.set_major_locator(mticker.MultipleLocator(step))
+                ax_bar.set_ylim(0, max_count + step)
+
                 for bar in bars:
                     height = bar.get_height()
-                    ax_bar.text(bar.get_x() + bar.get_width() / 2, height + 0.5, f'{int(height)}',
+                    ax_bar.text(bar.get_x() + bar.get_width() / 2, height + step * 0.05, f'{height:,}',
                                 ha='center', va='bottom', fontsize=10)
-
-                # Sumbu Y bilangan bulat dengan interval 5
-                ax_bar.yaxis.set_major_locator(MultipleLocator(5))
-                max_count = bar_data['Jumlah'].max()
-                ax_bar.set_ylim(0, ((max_count // 5) + 1) * 5)
 
                 ax_bar.set_ylabel("Jumlah")
                 ax_bar.set_xlabel("Sentimen")
@@ -153,7 +153,7 @@ else:
 
                 def autopct_format(pct, allvals):
                     absolute = int(round(pct / 100. * sum(allvals)))
-                    return f"{pct:.1f}%\n({absolute})"
+                    return f"{pct:.1f}%\n({absolute:,})"
 
                 fig_pie, ax_pie = plt.subplots()
                 ax_pie.pie(
@@ -170,7 +170,7 @@ else:
                 # === Unduh CSV ===
                 csv_result = filtered_df.to_csv(index=False).encode('utf-8')
                 st.download_button(
-                    label="📥 Unduh Hasil CSV",
+                    label="📅 Unduh Hasil CSV",
                     data=csv_result,
                     file_name="hasil_prediksi_kala.csv",
                     mime="text/csv"
